@@ -85,7 +85,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources: 
   limits:
     cpu: 2
     memory: 2Gi
