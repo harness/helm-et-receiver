@@ -1,0 +1,48 @@
+{{- if .Values.env.config}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Values.name}}
+  namespace: {{.Values.namespace.name}}
+data:
+  {{- .Values.env.config | toYaml | nindent 2}}
+---
+{{- end}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Values.name}}-config
+  namespace: {{.Values.namespace.name}}
+data:
+  application.properties: |-
+    logging.level.root={{ .Values.et.logLevel }}
+
+{{- if eq .Values.et.redisQueue.type "sql" }}
+    spring.profiles.active=mysql,msg_redis,sqli,sql_locinv,sql_metric
+    redis.consumer.group=sql
+{{- else if eq .Values.et.redisQueue.type "agent" }}
+    spring.profiles.active=mysql,msg_redis,agent_stats
+    redis.consumer.group=agent
+{{- else if eq .Values.et.redisQueue.type "decompile" }}
+    spring.profiles.active=mysql,msg_redis,decompile
+    redis.consumer.group=decompile
+{{- else }}
+    spring.profiles.active=mysql,msg_redis,hit
+    redis.consumer.group=hit
+{{- end }}
+
+  application-msg_redis.properties: |-
+    spring.cache.type=redis
+    spring.cache.redis.enable-statistics=true
+    spring.redis.host={{ .Values.et.redis.host }}
+    spring.redis.port={{ .Values.et.redis.port }}
+    management.health.redis.enabled=true
+    redis.stream.trimCronExpression={{ .Values.et.redis.trimCronExpression }}
+    redis.stream.streamLength={{ .Values.et.redis.streamLength }}
+
+  application-mysql.properties: |-
+    spring.datasource.url=jdbc:mysql://{{ .Values.env.config.DB_URL }}/overops?useLegacyDatetimeCode=false&rewriteBatchedStatements=true
+    spring.datasource.username=${DB_USER}
+    spring.datasource.password=${DB_PASS}
+    spring.datasource.hikari.maximumPoolSize={{ .Values.et.hikari.maximumPoolSize }}
+    spring.datasource.hikari.connectionTimeout={{ .Values.et.hikari.connectionTimeout }}
