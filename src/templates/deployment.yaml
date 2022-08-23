@@ -32,6 +32,13 @@ spec:
       serviceAccountName: {{ include "et-receiver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      initContainers:
+      - name: check-for-mysql
+        image: {{ .Values.initContainers.check.image.repository}}:{{.Values.initContainers.check.image.tag}}
+        command: ["sh","-c"]
+        args: ['while ! nc -z mysql-gcp:3306 2>/dev/null; do let elapsed=elapsed+1; if [ "$elapsed" -gt 90 ]; then echo "waiting"; exit 1; fi; sleep 1; done; echo "mysql is ready" ']
+
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -42,23 +49,33 @@ spec:
             - name: http
               containerPort: 9191
               protocol: TCP
+
           {{- if or .Values.env.config .Values.env.secrets}}
           envFrom:
           {{- if .Values.env.config}}
           - configMapRef:
-              name: {{ include "et-service.fullname" . }}
+              name: {{ include "et-receiver.fullname" . }}
           {{- end}}
           {{- if .Values.env.secrets}}
           - secretRef:
-              name: {{ include "et-service.fullname" . }}
+              name: {{ include "et-receiver.fullname" . }}
           {{- end}}
           {{- end}}
-              
+
+          # This is a temporary way to pass the db passwords
+          env: 
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: overops-secret
+                key: db-password
+
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: http
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
             successThreshold: {{ .Values.livenessProbe.successThreshold }}
@@ -89,27 +106,24 @@ spec:
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
           {{- end }}
 
-          volumeMounts:
-          - mountPath: /opt/overops/private
-            name: et-private
-
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          
           volumeMounts:
           - mountPath: /opt/overops/private
             name: et-private
 
-        volumes:
-        - name: et-private
-          configMap:
-            name: {{.Values.name}}-config
-            items:
-              - key: application.properties
-                path: application.properties
-              - key: application-mysql.properties
-                path: application-mysql.properties
-              - key: application-msg_redis.properties
-                path: application-msg_redis.properties
+      volumes:
+      - name: et-private
+        configMap:
+          name: {{ include "et-receiver.fullname" . }}-config
+          items:
+          - key: application.properties
+            path: application.properties
+          - key: application-mysql.properties
+            path: application-mysql.properties
+          - key: application-msg_redis.properties
+            path: application-msg_redis.properties
 
       {{- with .Values.nodeSelector }}
       nodeSelector:

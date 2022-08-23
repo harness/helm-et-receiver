@@ -19,8 +19,19 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+initContainers:
+  postgresql:
+    image:
+      tag: 11.10.0-debian-10-r24
+      repository: bitnami/postgresql
+  check:
+    image:
+      tag: 1.33.1
+      repository: busybox
+      
 livenessProbe:
   enabled: true
+  initialDelaySeconds: 40
   periodSeconds: 10
   failureThreshold: 3
   successThreshold: 1
@@ -112,9 +123,11 @@ et:
     host: redis-gcp
     port: 6379
     trimCronExpression: "@hourly"
-    streamLength: <+serviceConfig.serviceDefinition.spec.variables.STREAM_LENGTH>
+    streamLength: 500
+     # <+serviceConfig.serviceDefinition.spec.variables.STREAM_LENGTH>
   redisQueue:
-    type: <+serviceConfig.serviceDefinition.spec.variables.RECEIVER_TYPE>
+    type: hit
+      # <+serviceConfig.serviceDefinition.spec.variables.RECEIVER_TYPE>
 
   # rabbitQueue:
   #   # Receiver type: agent,hit,decompiler,sql, or custom.
