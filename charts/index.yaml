@@ -3,12 +3,12 @@ entries:
   et-receiver:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2022-08-22T18:40:23.562056928+03:00"
+    created: "2022-08-23T12:29:32.023562258+03:00"
     description: A Helm chart for Kubernetes
-    digest: 882a991d08136625c9c234cda1885ea4f995a6417092ae0eb0acb8261fb9364a
+    digest: ff118ddd84f862f4c16c8c531eeb7114b9520d610191870d5a96e27e8ac42f4d
     name: et-receiver
     type: application
     urls:
     - et-receiver-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-22T18:40:23.56100719+03:00"
+generated: "2022-08-23T12:29:32.022783217+03:00"
