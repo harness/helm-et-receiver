@@ -63,7 +63,7 @@ spec:
           {{- end}}
 
           # This is a temporary way to pass the db passwords
-          env: 
+          env:
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
@@ -108,7 +108,7 @@ spec:
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          
+
           volumeMounts:
           - mountPath: /opt/overops/private
             name: et-private

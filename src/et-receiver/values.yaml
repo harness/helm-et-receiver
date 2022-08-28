@@ -35,7 +35,7 @@ initContainers:
     image:
       tag: 1.33.1
       repository: busybox
-      
+
 livenessProbe:
   enabled: true
   initialDelaySeconds: 40
@@ -103,7 +103,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: 
+resources:
   limits:
     cpu: 2
     memory: 2Gi
