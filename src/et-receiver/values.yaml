@@ -13,7 +13,7 @@ image:
   registry: us.gcr.io
   repository: overops-play/overops/et-receiver
   pullPolicy: IfNotPresent
-  tag: "5.2.3-SNAPSHOT-309"
+  tag: "5.2.3-SNAPSHOT-315"
   digest: ""
 
 # image:
@@ -27,15 +27,23 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-initContainers:
-  postgresql:
-    image:
-      tag: 11.10.0-debian-10-r24
-      repository: bitnami/postgresql
-  check:
-    image:
-      tag: 1.33.1
-      repository: busybox
+# initContainers:
+#   postgresql:
+#     image:
+#       tag: 11.10.0-debian-10-r24
+#       repository: bitnami/postgresql
+#   check:
+#     image:
+#       tag: 1.33.1
+#       repository: busybox
+
+waitForInitContainer:
+  image:
+    registry: docker.io
+    repository: harness/helm-init-container
+    pullPolicy: IfNotPresent
+    tag: "latest"
+    digest: ""
 
 livenessProbe:
   enabled: true
@@ -149,9 +157,8 @@ et:
 
 env:
   config:
-    DB_TYPE: mysql
-    DB_URL: mysql-gcp:3306
+    DB_TYPE: postgresql
+    DB_URL: "et-db-postgresql:5432"
     DB_USER: overops
     JVM_HEAPSIZE: "1600m"
   secrets:
-    DB_PASS: overops

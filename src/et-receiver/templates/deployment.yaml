@@ -33,11 +33,13 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
 
-      initContainers:
-      - name: check-for-mysql
-        image: {{ .Values.initContainers.check.image.repository}}:{{.Values.initContainers.check.image.tag}}
-        command: ["sh","-c"]
-        args: ['while ! nc -z mysql-gcp:3306 2>/dev/null; do let elapsed=elapsed+1; if [ "$elapsed" -gt 90 ]; then echo "waiting"; exit 1; fi; sleep 1; done; echo "mysql is ready" ']
+      # initContainers:
+      # - name: wait-for-postgres
+      #   image: {{ include "common.images.image" (dict "imageRoot" .Values.waitForInitContainer.image "global" .Values.global) }}
+      #   imagePullPolicy: IfNotPresent
+      #   args:
+      #     - "pod"
+      #     - "-lapp=postgres"
 
       containers:
         - name: {{ .Chart.Name }}
@@ -120,10 +122,12 @@ spec:
           items:
           - key: application.properties
             path: application.properties
-          - key: application-mysql.properties
-            path: application-mysql.properties
           - key: application-msg_redis.properties
             path: application-msg_redis.properties
+          {{- if eq .Values.env.config.DB_TYPE "postgresql" }}
+          - key: application-postgresql.properties
+            path: application-postgresql.properties
+          {{- end }}
 
       {{- with .Values.nodeSelector }}
       nodeSelector:
