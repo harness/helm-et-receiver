@@ -40,13 +40,6 @@ data:
     redis.stream.trimCronExpression={{ .Values.et.redis.trimCronExpression }}
     redis.stream.streamLength={{ .Values.et.redis.streamLength }}
 
-  application-mysql.properties: |-
-    spring.datasource.url=jdbc:mysql://{{ .Values.env.config.DB_URL }}/overops?useLegacyDatetimeCode=false&rewriteBatchedStatements=true
-    spring.datasource.username=${DB_USER}
-    spring.datasource.password=${DB_PASS}
-    spring.datasource.hikari.maximumPoolSize={{ .Values.et.hikari.maximumPoolSize }}
-    spring.datasource.hikari.connectionTimeout={{ .Values.et.hikari.connectionTimeout }}
-
   {{- if eq .Values.env.config.DB_TYPE "postgresql" }}
   application-postgresql.properties: |-
     spring.datasource.url=jdbc:postgresql://{{ .Values.env.config.DB_URL }}/overops?useLegacyDatetimeCode=false&rewriteBatchedStatements=true
