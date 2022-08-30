@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  et-receiver:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-08-30T07:58:48.724246378Z"
+    description: A Helm chart for Kubernetes
+    digest: facd3da1de071202e98b1fa1b3e1043a9012a4a32256b4459fd31536033a5a0c
+    name: et-receiver
+    type: application
+    urls:
+    - https://github.com/harness/helm-et-receiver/releases/download/et-receiver-0.1.1/et-receiver-0.1.1.tgz
+    version: 0.1.1
+generated: "2022-08-30T07:58:48.724263279Z"
