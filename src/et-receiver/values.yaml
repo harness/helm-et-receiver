@@ -15,6 +15,13 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "5.2.3-SNAPSHOT-309"
 
+# image:
+#   repository: us.gcr.io/platform-205701/harness/release-et-receiver-ubi
+#   #repository: harness/et-receiver-signed # dockerhub
+#   pullPolicy: IfNotPresent
+#   # Overrides the image tag whose default is the chart appVersion.
+#   tag: "5.2.3-SNAPSHOT-16"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -28,7 +35,7 @@ initContainers:
     image:
       tag: 1.33.1
       repository: busybox
-      
+
 livenessProbe:
   enabled: true
   initialDelaySeconds: 40
@@ -96,7 +103,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: 
+resources:
   limits:
     cpu: 2
     memory: 2Gi
