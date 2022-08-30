@@ -1,1 +1,1 @@
-#Helm chart for et-receiver
+src/et-receiver/README.md
