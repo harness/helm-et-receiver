@@ -30,6 +30,11 @@ fullnameOverride: ""
 #       tag: 1.33.1
 #       repository: busybox
 
+# Postgres secret value and key
+postgresPassword:
+  name: postgres
+  key: postgres-password
+
 waitForInitContainer:
   image:
     registry: docker.io

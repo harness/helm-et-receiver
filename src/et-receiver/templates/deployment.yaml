@@ -69,8 +69,8 @@ spec:
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
-                name: overops-secret
-                key: db-password
+                name: {{ .Values.postgresPassword.name }}
+                key: {{ .Values.postgresPassword.key }}
 
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
