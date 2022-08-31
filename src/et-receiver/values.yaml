@@ -10,18 +10,11 @@ namespace:
   name: "overops-snapshot"
 
 image:
-  registry: us.gcr.io
-  repository: overops-play/overops/et-receiver
+  registry: docker.io
+  repository: harness/et-receiver-signed
   pullPolicy: IfNotPresent
-  tag: "5.2.3-SNAPSHOT-315"
+  tag: "5.3.0"
   digest: ""
-
-# image:
-#   repository: docker.io
-#   repository: harness/et-receiver-signed
-#   pullPolicy: IfNotPresent
-#   tag: "5.2.3"
-#   digest: ""
 
 imagePullSecrets: []
 nameOverride: ""
