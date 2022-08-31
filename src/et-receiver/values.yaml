@@ -155,8 +155,9 @@ et:
 
 env:
   config:
-    DB_TYPE: postgresql
-    DB_URL: "et-db-postgresql:5432"
+    DB_TYPE: mysql
+    DB_URL: mysql-gcp:3306
     DB_USER: overops
     JVM_HEAPSIZE: "1600m"
   secrets:
+    DB_PASS: overops
