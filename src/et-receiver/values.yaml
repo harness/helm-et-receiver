@@ -6,9 +6,6 @@ replicaCount: 1
 maxSurge: 100%
 maxUnavailable: 0
 
-namespace:
-  name: "overops-snapshot"
-
 image:
   registry: docker.io
   repository: harness/et-receiver-signed
