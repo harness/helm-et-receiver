@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "et-receiver.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "et-receiver.labels" . | nindent 4 }}
 spec:
@@ -32,15 +33,13 @@ spec:
       serviceAccountName: {{ include "et-receiver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-
-      # initContainers:
-      # - name: wait-for-postgres
-      #   image: {{ include "common.images.image" (dict "imageRoot" .Values.waitForInitContainer.image "global" .Values.global) }}
-      #   imagePullPolicy: IfNotPresent
-      #   args:
-      #     - "pod"
-      #     - "-lapp=postgres"
-
+      initContainers:
+      - name: wait-for-postgres
+        image: {{ include "common.images.image" (dict "imageRoot" .Values.waitForInitContainer.image "global" .Values.global) }}
+        imagePullPolicy: IfNotPresent
+        args:
+          - "pod"
+          - "-lapp=postgres"
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -52,25 +51,18 @@ spec:
               containerPort: 9191
               protocol: TCP
 
-          {{- if or .Values.env.config .Values.env.secrets}}
+          {{- if or .Values.env.config }}
           envFrom:
-          {{- if .Values.env.config}}
           - configMapRef:
               name: {{ include "et-receiver.fullname" . }}
           {{- end}}
-          {{- if .Values.env.secrets}}
-          - secretRef:
-              name: {{ include "et-receiver.fullname" . }}
-          {{- end}}
-          {{- end}}
 
-          # This is a temporary way to pass the db passwords
           env:
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
-                name: overops-secret
-                key: db-password
+                name: {{ .Values.postgresPassword.name }}
+                key: {{ .Values.postgresPassword.key }}
 
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:

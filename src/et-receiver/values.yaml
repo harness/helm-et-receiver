@@ -6,9 +6,6 @@ replicaCount: 1
 maxSurge: 100%
 maxUnavailable: 0
 
-namespace:
-  name: "overops-snapshot"
-
 image:
   registry: docker.io
   repository: harness/et-receiver-signed
@@ -20,16 +17,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# initContainers:
-#   postgresql:
-#     image:
-#       tag: 11.10.0-debian-10-r24
-#       repository: bitnami/postgresql
-#   check:
-#     image:
-#       tag: 1.33.1
-#       repository: busybox
-
 waitForInitContainer:
   image:
     registry: docker.io
@@ -37,6 +24,11 @@ waitForInitContainer:
     pullPolicy: IfNotPresent
     tag: "latest"
     digest: ""
+
+# Postgres secret value and key
+postgresPassword:
+  name: postgres
+  key: postgres-password
 
 livenessProbe:
   enabled: true
@@ -151,7 +143,6 @@ et:
 env:
   config:
     DB_TYPE: postgresql
-    DB_URL: "et-db-postgresql:5432"
-    DB_USER: overops
+    DB_URL: postgresql:5432
+    DB_USER: postgres
     JVM_HEAPSIZE: "1600m"
-  secrets:
