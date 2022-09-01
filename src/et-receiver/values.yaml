@@ -131,7 +131,8 @@ affinity: {}
 et:
   logLevel: INFO
   redis:
-    host: redis-gcp
+    enabled: false
+    host:
     port: 6379
     trimCronExpression: "@hourly"
     streamLength: 500
