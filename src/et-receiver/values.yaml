@@ -17,21 +17,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# initContainers:
-#   postgresql:
-#     image:
-#       tag: 11.10.0-debian-10-r24
-#       repository: bitnami/postgresql
-#   check:
-#     image:
-#       tag: 1.33.1
-#       repository: busybox
-
-# Postgres secret value and key
-postgresPassword:
-  name: postgres
-  key: postgres-password
-
 waitForInitContainer:
   image:
     registry: docker.io
@@ -39,6 +24,11 @@ waitForInitContainer:
     pullPolicy: IfNotPresent
     tag: "latest"
     digest: ""
+
+# Postgres secret value and key
+postgresPassword:
+  name: postgres
+  key: postgres-password
 
 livenessProbe:
   enabled: true

@@ -33,15 +33,13 @@ spec:
       serviceAccountName: {{ include "et-receiver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-
-      # initContainers:
-      # - name: wait-for-postgres
-      #   image: {{ include "common.images.image" (dict "imageRoot" .Values.waitForInitContainer.image "global" .Values.global) }}
-      #   imagePullPolicy: IfNotPresent
-      #   args:
-      #     - "pod"
-      #     - "-lapp=postgres"
-
+      initContainers:
+      - name: wait-for-postgres
+        image: {{ include "common.images.image" (dict "imageRoot" .Values.waitForInitContainer.image "global" .Values.global) }}
+        imagePullPolicy: IfNotPresent
+        args:
+          - "pod"
+          - "-lapp=postgres"
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
