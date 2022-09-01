@@ -52,19 +52,12 @@ spec:
               containerPort: 9191
               protocol: TCP
 
-          {{- if or .Values.env.config .Values.env.secrets}}
+          {{- if or .Values.env.config }}
           envFrom:
-          {{- if .Values.env.config}}
           - configMapRef:
               name: {{ include "et-receiver.fullname" . }}
           {{- end}}
-          {{- if .Values.env.secrets}}
-          - secretRef:
-              name: {{ include "et-receiver.fullname" . }}
-          {{- end}}
-          {{- end}}
 
-          # This is a temporary way to pass the db passwords
           env:
           - name: DB_PASS
             valueFrom:
