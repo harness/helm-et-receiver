@@ -6,36 +6,29 @@ replicaCount: 1
 maxSurge: 100%
 maxUnavailable: 0
 
-namespace:
-  name: "overops-snapshot"
-
 image:
-  registry: us.gcr.io
-  repository: overops-play/overops/et-receiver
+  registry: docker.io
+  repository: harness/et-receiver-signed
   pullPolicy: IfNotPresent
-  tag: "5.2.3-SNAPSHOT-309"
+  tag: "5.3.0"
   digest: ""
-
-# image:
-#   repository: docker.io
-#   repository: harness/et-receiver-signed
-#   pullPolicy: IfNotPresent
-#   tag: "5.2.3"
-#   digest: ""
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-initContainers:
-  postgresql:
-    image:
-      tag: 11.10.0-debian-10-r24
-      repository: bitnami/postgresql
-  check:
-    image:
-      tag: 1.33.1
-      repository: busybox
+waitForInitContainer:
+  image:
+    registry: docker.io
+    repository: harness/helm-init-container
+    pullPolicy: IfNotPresent
+    tag: "latest"
+    digest: ""
+
+# Postgres secret value and key
+postgresPassword:
+  name: postgres
+  key: postgres-password
 
 livenessProbe:
   enabled: true
@@ -149,9 +142,7 @@ et:
 
 env:
   config:
-    DB_TYPE: mysql
-    DB_URL: mysql-gcp:3306
-    DB_USER: overops
+    DB_TYPE: postgresql
+    DB_URL: postgresql:5432
+    DB_USER: postgres
     JVM_HEAPSIZE: "1600m"
-  secrets:
-    DB_PASS: overops
