@@ -54,15 +54,25 @@ readinessProbe:
   successThreshold: 1
   timeoutSeconds: 1
 
+# serviceAccount:
+#   # Specifies whether a service account should be created
+#   create: true
+#   # Annotations to add to the service account
+#   annotations: {}
+#   # The name of the service account to use.
+#   # If not set and create is true, a name is generated using the fullname template
+#   name: ""
+
+# Temp Hack to solve the following, will be fix soon .
+#   User "system:serviceaccount:harness-1:harness-et-service" cannot list resource "pods" in API group "" in the namespace "harness-1"
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
+  name: "harness-default"
 podAnnotations: {}
 
 podSecurityContext: {}
@@ -121,7 +131,8 @@ affinity: {}
 et:
   logLevel: INFO
   redis:
-    host: redis-gcp
+    enabled: false
+    host:
     port: 6379
     trimCronExpression: "@hourly"
     streamLength: 500
