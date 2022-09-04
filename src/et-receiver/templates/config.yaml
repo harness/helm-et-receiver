@@ -1,48 +1,52 @@
-{{- if .Values.env.config}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "et-receiver.fullname" . }}
+  name: {{ .Values.name }}-env
   namespace: {{ .Release.Namespace }}
 data:
-  {{- .Values.env.config | toYaml | nindent 2}}
+  DB_USER: postgres
+  DB_URL: postgres:5432
 ---
-{{- end}}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "et-receiver.fullname" . }}-config
+  name: {{ .Values.name }}-config
   namespace: {{ .Release.Namespace }}
 data:
   application.properties: |-
     logging.level.root={{ .Values.et.logLevel }}
 
 {{- if eq .Values.et.redisQueue.type "sql" }}
-    spring.profiles.active={{ .Values.env.config.DB_TYPE }},msg_redis,sqli,sql_locinv,sql_metric
+    spring.profiles.active=postgresql,msg_redis,sqli,sql_locinv,sql_metric
     redis.consumer.group=sql
 {{- else if eq .Values.et.redisQueue.type "agent" }}
-    spring.profiles.active={{ .Values.env.config.DB_TYPE }},msg_redis,agent_stats
+    spring.profiles.active=postgresql,msg_redis,agent_stats
     redis.consumer.group=agent
 {{- else if eq .Values.et.redisQueue.type "decompile" }}
-    spring.profiles.active={{ .Values.env.config.DB_TYPE }},msg_redis,decompile
+    spring.profiles.active=postgresql,msg_redis,decompile
     redis.consumer.group=decompile
 {{- else }}
-    spring.profiles.active={{ .Values.env.config.DB_TYPE }},msg_redis,hit
+    spring.profiles.active=postgresql,msg_redis,hit
     redis.consumer.group=hit
 {{- end }}
 
   application-msg_redis.properties: |-
     spring.cache.type=redis
     spring.cache.redis.enable-statistics=true
+    {{- if .Values.et.redis.useSentinel }}
+    spring.redis.sentinel.master=harness-redis
+    spring.redis.sentinel.nodes=redis://redis-sentinel-harness-announce-0.{{ .Release.Namespace }}:26379,redis://redis-sentinel-harness-announce-1.{{ .Release.Namespace }}:26379,redis://redis-sentinel-harness-announce-2.{{ .Release.Namespace }}:26379
+    {{- else }}
     spring.redis.host={{ .Values.et.redis.host }}
     spring.redis.port={{ .Values.et.redis.port }}
+    {{- end }}
     management.health.redis.enabled=true
     redis.stream.trimCronExpression={{ .Values.et.redis.trimCronExpression }}
     redis.stream.streamLength={{ .Values.et.redis.streamLength }}
 
-  {{- if eq .Values.env.config.DB_TYPE "postgresql" }}
   application-postgresql.properties: |-
-    spring.datasource.url=jdbc:postgresql://{{ .Values.env.config.DB_URL }}/overops?useLegacyDatetimeCode=false&rewriteBatchedStatements=true
+    spring.datasource.url=jdbc:postgresql://${DB_URL}/overops?useLegacyDatetimeCode=false&rewriteBatchedStatements=true
     spring.datasource.username=${DB_USER}
     spring.datasource.password=${DB_PASS}
 
@@ -50,11 +54,9 @@ data:
     spring.datasource.hikari.maximumPoolSize={{ .Values.et.hikari.maximumPoolSize }}
     spring.datasource.hikari.connectionTimeout={{ .Values.et.hikari.connectionTimeout }}
 
-
     # Validate JPA Schema to ensure change sets are applied properly and are in sync with JPA Model
     spring.jpa.hibernate.ddl-auto=validate
     spring.jpa.open-in-view=false
 
     spring.sql.init.platform=postgresql
     spring.sql.init.mode=always
-  {{- end }}

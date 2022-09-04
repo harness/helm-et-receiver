@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Name should be overode with each receiver type i.e et-receiver-hit
+name: et-receiver
 replicaCount: 1
 maxSurge: 100%
 maxUnavailable: 0
@@ -86,27 +88,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 9191
-
-ingress:
-  enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-      - path: /
-        backend:
-          serviceName: chart-example.local
-          servicePort: 9191
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
 resources:
   limits:
     cpu: 2
@@ -130,30 +111,19 @@ affinity: {}
 
 et:
   logLevel: INFO
+  java:
+    heapSize: "1600m"
   redis:
-    enabled: false
+    enabled: true
     host:
     port: 6379
     trimCronExpression: "@hourly"
     streamLength: 500
-     # <+serviceConfig.serviceDefinition.spec.variables.STREAM_LENGTH>
+    useSentinel: true
+
   redisQueue:
     type: hit
-      # <+serviceConfig.serviceDefinition.spec.variables.RECEIVER_TYPE>
-
-  # rabbitQueue:
-  #   # Receiver type: agent,hit,decompiler,sql, or custom.
-  #   # Custom must set customSetting value (i.e: mysql,msg_rabbit,decompile,hit).
-  #   type: hit
-  #   customType: ""
 
   hikari:
     maximumPoolSize: 10
     connectionTimeout: 60000
-
-env:
-  config:
-    DB_TYPE: postgresql
-    DB_URL: postgresql:5432
-    DB_USER: postgres
-    JVM_HEAPSIZE: "1600m"

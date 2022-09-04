@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "et-receiver.fullname" . }}
+  name: {{ .Values.name }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "et-receiver.labels" . | nindent 4 }}
@@ -51,11 +51,9 @@ spec:
               containerPort: 9191
               protocol: TCP
 
-          {{- if or .Values.env.config }}
           envFrom:
           - configMapRef:
-              name: {{ include "et-receiver.fullname" . }}
-          {{- end}}
+              name: {{ .Values.name }}-env
 
           env:
           - name: DB_PASS
@@ -110,16 +108,14 @@ spec:
       volumes:
       - name: et-private
         configMap:
-          name: {{ include "et-receiver.fullname" . }}-config
+          name: {{ .Values.name }}-config
           items:
           - key: application.properties
             path: application.properties
           - key: application-msg_redis.properties
             path: application-msg_redis.properties
-          {{- if eq .Values.env.config.DB_TYPE "postgresql" }}
           - key: application-postgresql.properties
             path: application-postgresql.properties
-          {{- end }}
 
       {{- with .Values.nodeSelector }}
       nodeSelector:
