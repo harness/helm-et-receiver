@@ -4,8 +4,8 @@ metadata:
   name: {{ .Values.name }}-env
   namespace: {{ .Release.Namespace }}
 data:
-  DB_USER: postgres
-  DB_URL: postgres:5432
+  DB_USER: "postgres"
+  DB_URL: "postgres:5432"
 ---
 
 apiVersion: v1
