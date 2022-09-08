@@ -3,6 +3,20 @@ entries:
   et-receiver:
   - apiVersion: v2
     appVersion: 5.3.0
+    created: "2022-09-08T17:41:17.455126218Z"
+    dependencies:
+    - name: harness-common
+      repository: https://harness.github.io/helm-common
+      version: 1.x.x
+    description: A Helm chart for Kubernetes
+    digest: f40c2cb8d41121bd8c8b68b0f13a7b40cf88d6f84c213d211ca95a2c1f9a29ba
+    name: et-receiver
+    type: application
+    urls:
+    - https://github.com/harness/helm-et-receiver/releases/download/et-receiver-0.1.10/et-receiver-0.1.10.tgz
+    version: 0.1.10
+  - apiVersion: v2
+    appVersion: 5.3.0
     created: "2022-09-07T09:43:56.433649884Z"
     dependencies:
     - name: harness-common
@@ -90,4 +104,4 @@ entries:
     urls:
     - https://github.com/harness/helm-et-receiver/releases/download/et-receiver-0.1.1/et-receiver-0.1.1.tgz
     version: 0.1.1
-generated: "2022-09-07T09:43:56.433945186Z"
+generated: "2022-09-08T17:41:17.455148318Z"
