@@ -34,12 +34,12 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
-      - name: wait-for-postgres
+      - name: wait-for-et-service
         image: {{ include "common.images.image" (dict "imageRoot" .Values.waitForInitContainer.image "global" .Values.global) }}
         imagePullPolicy: IfNotPresent
         args:
           - "pod"
-          - "-lapp=postgres"
+          - "-lapp=et-service"
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
